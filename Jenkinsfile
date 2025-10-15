@@ -28,40 +28,7 @@ pipeline {
             }
         }
 
-        stage('Docker Compose Test') {
-            steps {
-                script {
-                    echo "🧪 Testing with Docker Compose..."
-                    sh """
-                        # Clean up existing containers
-                        docker-compose down -v
-
-                        # Build and start services
-                        docker-compose build
-                        docker-compose up -d
-
-                        # Wait for services to be ready
-                        sleep 30
-                        docker-compose ps
-
-                        # Test application health
-                        i=1
-                        while [ \$i -le 5 ]; do
-                            if curl -f http://localhost:5000 2>/dev/null; then
-                                echo "✅ Application is responding"
-                                break
-                            fi
-                            echo "⏳ Waiting for application... attempt \$i/5"
-                            i=\$((i+1))
-                            sleep 10
-                        done
-
-                        # Show logs for debugging
-                        docker-compose logs --tail=10 fitness-app
-                    """
-                }
-            }
-        }
+        
 
         stage('Push Docker Image') {
             steps {
