@@ -59,9 +59,6 @@ pipeline {
 
                             # Update application image and deploy
                             kubectl apply -f app-deployment.yaml
-                            #kubectl set image deployment/fitness-tracker-app \\
-                                #fitness-tracker-app=${DOCKER_IMAGE}:${DOCKER_TAG} --record
-                            
 
                             echo "⏳ Waiting for deployments to complete..."
                             kubectl rollout status deployment/mongodb --timeout=300s
