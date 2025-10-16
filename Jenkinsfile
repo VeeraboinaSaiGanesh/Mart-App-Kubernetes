@@ -18,7 +18,7 @@ pipeline {
             }
         }
 
-        stage('Build Docker a  Image') {
+        stage('Build Docker Image') {
             steps {
                 script {
                     echo "🛠️ Building Docker image..."
@@ -59,13 +59,13 @@ pipeline {
 
                             # Update application image and deploy
                             kubectl apply -f app-deployment.yaml
-                            kubectl set image deployment/fitness-tracker-app \\
-                                fitness-tracker-app=${DOCKER_IMAGE}:${DOCKER_TAG} --record
+                            #kubectl set image deployment/fitness-tracker-app \\
+                                #fitness-tracker-app=${DOCKER_IMAGE}:${DOCKER_TAG} --record
                             
 
                             echo "⏳ Waiting for deployments to complete..."
                             kubectl rollout status deployment/mongodb --timeout=300s
-                            kubectl rollout status deployment/fitness-tracker-app --timeout=300s
+                            kubectl rollout status deployment/mart-app --timeout=300s
 
                             echo "📊 Deployment status:"
                             kubectl get deployments
@@ -87,8 +87,8 @@ pipeline {
 
                             i=1
                             while [ \$i -le 10 ]; do
-                                EXTERNAL_IP=\$(kubectl get service fitness-tracker-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || echo "")
-                                EXTERNAL_HOSTNAME=\$(kubectl get service fitness-tracker-service -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' 2>/dev/null || echo "")
+                                EXTERNAL_IP=\$(kubectl get service mart-app-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}' 2>/dev/null || echo "")
+                                EXTERNAL_HOSTNAME=\$(kubectl get service mart-app-service -o jsonpath='{.status.loadBalancer.ingress[0].hostname}' 2>/dev/null || echo "")
 
                                 if [ ! -z "\$EXTERNAL_IP" ]; then
                                     echo "🌐 Application URL: http://\$EXTERNAL_IP"
@@ -104,7 +104,7 @@ pipeline {
                             done
 
                             # Show final service status
-                            kubectl get service fitness-tracker-service
+                            kubectl get service mart-app-service
                             echo "✅ Deployment completed successfully!"
                         """
                     }
